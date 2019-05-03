@@ -12,6 +12,16 @@
 static int animationPeriod = 4;
 static int isAnimate = 0;
 
+char go[] = "GAME OVER";
+char m1[] = "GLOBAL ACADEMY OF TECHNOLOGY";
+char m2[] = "DEPARTMENT OF CSE";
+char m3[] = "COMPUTER GRAPHICS MINI PROJECT ON JUMPING DINOSAUR USING OPENGL";
+char m8[] = "BY";
+char m9[] = "VINITH S";
+char m10[] = "1GA16CS178";
+char m7[] = "PRESS SPACE BAR TO CONTINUE";
+
+
 const int fact = 3;
 const int x = 80;
 const double DEG2RAD = 3.1415926535897932384 / 180;
@@ -21,6 +31,18 @@ static int flag = 0;
 static int walk = 0;
 static int x_ = 2500;
 using namespace std;
+int cheat = 0;
+
+void* font = GLUT_BITMAP_TIMES_ROMAN_24;
+void* fonts[] =
+{
+  GLUT_BITMAP_9_BY_15,
+  GLUT_BITMAP_TIMES_ROMAN_10,
+  GLUT_BITMAP_TIMES_ROMAN_24
+};
+
+void output(int x, int y, char* string);
+void intro(void);
 
 void animate(int value) {
 	if (isAnimate) {
@@ -39,11 +61,13 @@ void keyInput(unsigned char key, int x, int y) {
 			isAnimate = 1;
 			animate(1);
 		}
+		cheat = 1;
 		break;
 	}
 }
 
-bool collision(double len) {
+bool collision(double len) 
+{
 	if (abs(157 + x - (x_ + x + 50)) <= 100 + x) {
 		if (5 * fact + w <= 650 * len)return 1;
 		return 0;
@@ -103,7 +127,8 @@ void generate_tree(int x_, double len) {
 	draw_circle(90.0, 25, 50, x_, 400 * len, -1, -1);
 }
 
-void reset() {
+void reset() 
+{
 	w = 200;
 	flag = 0;
 	walk = 0;
@@ -112,9 +137,12 @@ void reset() {
 	isAnimate = 0;
 }
 
-void render(void) {
-	glClear(GL_COLOR_BUFFER_BIT);
 
+void render(void) 
+{
+	glClear(GL_COLOR_BUFFER_BIT);
+	if (cheat == 0)
+		intro();
 	glPointSize(2);
 	glBegin(GL_POINTS);
 	glColor3f((0) / 255.0, (0) / 255.0, (0) / 255.0);
@@ -218,8 +246,10 @@ void render(void) {
 
 	glEnd();
 
-	if (collision(1.0)) {
+	if (collision(1.0)) 
+	{
 		reset();
+		output(900, 1500, go);		
 	}
 	if (w <= 200) {
 		if (walk == -20)
@@ -245,24 +275,51 @@ void render(void) {
 	glFlush();
 }
 
-void setup(void) {
+void output(int x, int y, char* string)
+{
+	int len, i;
+
+	glRasterPos2f(x, y);
+	len = (int)strlen(string);
+	for (i = 0; i < len; i++) {
+		glutBitmapCharacter(font, string[i]);
+	}
+}
+
+void setup(void) 
+{
 	glClearColor(1.0, 1.0, 1.0, 0.0);
 	glMatrixMode(GL_PROJECTION);
 	gluOrtho2D(0.0, 2000, 0.0, 2000);
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv) 
+{
 	srand(time(NULL));
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
-	glutInitWindowSize(1230, 650);
+	glutInitWindowSize(1280, 720);
 	glutInitWindowPosition(50, 50);
 	glutCreateWindow("Dinosaur!!");
 	setup();
+
+
 	glutDisplayFunc(render);
 
 	glutKeyboardFunc(keyInput);
 	glutSpecialFunc(specialKeyInput);
 
+
 	glutMainLoop();
+}
+
+void intro(void)
+{
+	output(700, 1600, m1);
+	output(850, 1500, m2);
+	output(300, 1400, m3);
+	output(1000, 1000, m8);
+	output(950, 900, m9);
+	output(925, 800, m10);
+	output(725, 300, m7);
 }
